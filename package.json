@@ -1,0 +1,43 @@
+{
+	"name": "kap-hide-desktop-icons",
+	"version": "1.0.0",
+	"description": "Hide your desktop icons while recording",
+	"license": "MIT",
+	"repository": "karaggeorge/kap-hide-desktop-icons",
+	"author": {
+		"name": "George Karagkiaouris",
+		"email": "gkaragkiaouris2@gmail.com",
+		"url": "https://gkaragkiaouris.tech"
+	},
+	"scripts": {
+		"test": "xo"
+	},
+	"files": [
+		"index.js"
+	],
+	"keywords": [
+		"kap-plugin",
+		"hide",
+		"desktop",
+		"icons",
+		"recording",
+		"wallpaper",
+		"url",
+		"file",
+		"clean"
+	],
+	"kapVersion": ">=3.2.0",
+	"dependencies": {
+		"capitalize": "^2.0.2",
+		"form-data": "^2.1.4",
+		"got": "^10.5.7",
+		"hide-desktop-icons": "^0.4.0",
+		"tempfile": "^3.0.0",
+		"url-regex": "^5.0.0"
+	},
+	"devDependencies": {
+		"ava": "^2.3.0",
+		"kap-plugin-test": "^0.5.0",
+		"xo": "^0.24.0"
+	}
+}
