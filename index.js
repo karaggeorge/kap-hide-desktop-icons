@@ -47,7 +47,7 @@ const config = {
 		type: 'string',
 		default: '',
 		// eslint-disable-next-line no-useless-escape
-		pattern: new RegExp(`(${regex.source})|(^\/([A-z0-9-_+]+\/)*([A-z0-9]+\.([A-z0-9-_+]+))$)`, 'i').source
+		pattern: new RegExp(`(^$)|(${regex.source})|(^\/([A-z0-9-_+]+\/)*([A-z0-9]+\.([A-z0-9-_+]+))$)`, 'i').source
 	}
 };
 
@@ -61,9 +61,7 @@ const fetchImage = async url => {
 		);
 
 		return file;
-	} catch {
-
-	}
+	} catch {}
 };
 
 const willStartRecording = async ({config}) => {
@@ -96,4 +94,4 @@ const hideDesktopIcons = {
 	didStopRecording
 };
 
-exports.shareServices = [hideDesktopIcons];
+exports.recordServices = [hideDesktopIcons];
