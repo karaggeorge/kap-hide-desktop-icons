@@ -43,7 +43,7 @@ const config = {
 	},
 	url: {
 		title: 'File or URL',
-		description: 'Will only be used if the option above is set to custom file or URL.',
+		description: 'Will only be used if the option above is set to custom file or URL.\nIf you use a remote url, the image will need to be fetched before starting to record, which might slow down the process.',
 		type: 'string',
 		default: '',
 		// eslint-disable-next-line no-useless-escape
