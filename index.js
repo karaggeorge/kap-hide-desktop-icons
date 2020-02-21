@@ -85,7 +85,7 @@ const downloadWallpaper = async config => {
 	}
 
 	const remoteUrl = wallpaper === 'Custom file or URL' ? url : wallpapers[wallpaper];
-	const filePath = path.resolve(path.dirname(config.path), `hdi-wallpaper.${path.extname(remoteUrl)}`);
+	const filePath = path.resolve(path.dirname(config.path), `hdi-wallpaper${path.extname(remoteUrl)}`);
 
 	const result = await fetchImage(remoteUrl, filePath);
 	config.set('cachedFilePath', result);
@@ -120,7 +120,7 @@ const didStopRecording = async () => {
 	return desktopIcons.show();
 };
 
-const didConfigChange = async (_, _, config) => {
+const didConfigChange = async (newValues, oldValues, config) => {
 	return downloadWallpaper(config);
 }
 
