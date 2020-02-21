@@ -6,7 +6,6 @@ const {promisify} = require('util');
 const desktopIcons = require('hide-desktop-icons');
 const urlRegex = require('url-regex');
 const got = require('got');
-const tempfile = require('tempfile');
 
 const pipeline = promisify(stream.pipeline);
 
@@ -26,7 +25,11 @@ const wallpapers = {
 	Yosemite: 'http://512pixels.net/downloads/macos-wallpapers/10-10.jpg',
 	'El-Capitan': 'http://512pixels.net/downloads/macos-wallpapers/10-11.jpg',
 	Sierra: 'http://512pixels.net/downloads/macos-wallpapers/10-12.jpg',
-	'High Sierra': 'https://512pixels.net/downloads/macos-wallpapers/10-13.jpg'
+	'High Sierra': 'https://512pixels.net/downloads/macos-wallpapers/10-13.jpg',
+	'Mojave - Light': 'https://2ig18m1zutag3bjpoclbo8am-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/10-14-Mojave-1.jpg',
+	'Mojave - Dark': 'https://2ig18m1zutag3bjpoclbo8am-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/10-14-Mojave-2.jpg',
+	'Catalina - Light': 'https://2ig18m1zutag3bjpoclbo8am-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/10-15-1-Dawn.jpg',
+	'Catalina - Dark': 'https://2ig18m1zutag3bjpoclbo8am-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/10-15-8-Night.jpg'
 };
 
 const config = {
@@ -48,44 +51,78 @@ const config = {
 		default: '',
 		// eslint-disable-next-line no-useless-escape
 		pattern: new RegExp(`(^$)|(${regex.source})|(^\/([A-z0-9-_+]+\/)*([A-z0-9]+\.([A-z0-9-_+]+))$)`, 'i').source
+	},
+	cacheUrl: {
+		title: 'Cache URL',
+		description: 'Only applicable if you are using the URL field above. Caching the image and re-using it will speed up time-to-record.',
+		type: 'boolean',
+		default: true
 	}
 };
 
-const fetchImage = async url => {
+const fetchImage = async (url, filePath) => {
 	try {
-		const file = tempfile(path.extname(url));
-
 		await pipeline(
 			got.stream(url),
-			fs.createWriteStream(file)
+			fs.createWriteStream(filePath)
 		);
 
-		return file;
+		return filePath;
 	} catch {}
 };
 
-const willStartRecording = async ({config}) => {
-	const wallpaper = config.get('wallpaper');
+const downloadWallpaper = async config => {
+	const {wallpaper, url} = config.store;
 
-	let filePath;
-	if (wallpaper !== 'Current wallpaper') {
-		if (wallpaper === 'Custom file or URL') {
-			const url = config.get('url');
+	if (wallpaper === 'Current wallpaper') {
+		return;
+	}
 
-			if (regex.test(url)) {
-				filePath = await fetchImage(url);
-			} else if (fs.existsSync(url)) {
-				filePath = url;
-			}
+	if (wallpaper === 'Custom file or URL' && !regex.test(url)) {
+		if (fs.existsSync(url)) {
+			return url;
 		}
 	}
 
-	return desktopIcons.hide(filePath);
+	const remoteUrl = wallpaper === 'Custom file or URL' ? url : wallpapers[wallpaper];
+	const filePath = path.resolve(path.dirname(config.path), `hdi-wallpaper.${path.extname(remoteUrl)}`);
+
+	const result = await fetchImage(remoteUrl, filePath);
+	config.set('cachedFilePath', result);
+	return result;
+};
+
+const willStartRecording = async ({config}) => {
+	const {wallpaper, url, cacheUrl, cachedFilePath} = config.store;
+
+	if (wallpaper === 'Current Wallpaper') {
+		return desktopIcons.hide();
+	}
+
+	if (wallpaper === 'Custom file or URL') {
+		if (!regex.test(url)) {
+			return desktopIcons.hide(url);
+		}
+
+		if (!cacheUrl) {
+			return desktopIcons.hide(await downloadWallpaper(config));
+		}
+	}
+
+	if (cachedFilePath && fs.existsSync(cachedFilePath)) {
+		return desktopIcons.hide(cachedFilePath);
+	}
+
+	return desktopIcons.hide(await downloadWallpaper(config));
 };
 
 const didStopRecording = async () => {
 	return desktopIcons.show();
 };
+
+const didConfigChange = async (_, _, config) => {
+	return downloadWallpaper(config);
+}
 
 const hideDesktopIcons = {
 	title: 'Hide Desktop Icons',
@@ -95,3 +132,4 @@ const hideDesktopIcons = {
 };
 
 exports.recordServices = [hideDesktopIcons];
+exports.didConfigChange = didConfigChange;
