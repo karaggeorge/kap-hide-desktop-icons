@@ -10,4 +10,4 @@ In the `Kap` menu, go to `Preferences…`, select the `Plugins` pane, find this 
 
 ## Usage
 
-In the cropper or by right clicking the tray icon, click the `…` icon, then `Plugins` and make sure `Hide desktop icons` is enabled.
+In the cropper or by right clicking the tray icon, click the `…` icon, then `Plugins` and make sure `Hide Desktop Icons` is enabled.

@@ -88,7 +88,7 @@ const didStopRecording = async () => {
 };
 
 const hideDesktopIcons = {
-	title: 'Hide desktop icons',
+	title: 'Hide Desktop Icons',
 	config,
 	willStartRecording,
 	didStopRecording
