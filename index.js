@@ -122,7 +122,7 @@ const didStopRecording = async () => {
 
 const didConfigChange = async (newValues, oldValues, config) => {
 	return downloadWallpaper(config);
-}
+};
 
 const hideDesktopIcons = {
 	title: 'Hide Desktop Icons',
