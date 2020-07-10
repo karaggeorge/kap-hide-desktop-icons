@@ -88,7 +88,12 @@ const downloadWallpaper = async config => {
 	const filePath = path.resolve(path.dirname(config.path), `hdi-wallpaper${path.extname(remoteUrl)}`);
 
 	const result = await fetchImage(remoteUrl, filePath);
-	config.set('cachedFilePath', result);
+	if (result) {
+		config.set('cachedFilePath', result);
+	} else {
+		config.delete('cachedFilePath');
+	}
+
 	return result;
 };
 
